@@ -61,9 +61,6 @@ $category = $statement->fetchAll(PDO::FETCH_ASSOC);
                     <?php endforeach; ?>
                 </div>
             </div>
-
-
-            
         </div>
     </div>
     <footer class="footer mt-5">
