@@ -17,24 +17,6 @@ $category = $statement->fetchAll(PDO::FETCH_ASSOC);
     <?php echo ($categories['name']);  ?>
     </div>
 <?php endforeach; ?>*/
-
-function generateSlug($title) {
-    // Convert the title to a slug by removing special characters and replacing spaces with dashes
-    $slug = preg_replace('/[^a-zA-Z0-9]+/', '-', strtolower(trim($title)));
-    return $slug;
-}
-
-// When creating or updating a page
-$title = trim($_POST['title']);
-$slug = generateSlug($title);
-
-$id = $post['id'];
-$slug = generateSlug($post['title']);
-$url = "view.php?id=$id&slug=$slug";
-
-// Example link in HTML
-echo "<a href=\"$url\">" . htmlspecialchars($post['title']) . "</a>";
-
 ?>
 
 <!DOCTYPE html>

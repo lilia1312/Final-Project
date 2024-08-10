@@ -11,6 +11,25 @@ session_start();
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">    <script src="https://cdn.tiny.cloud/1/ulxoac0nqp2aqf7hhoobm76pt3pszj4a7v1lfyni0osp55me/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
     
     <title></title>
+    <html>
+    <script>
+    function showResult(str) {
+    if (str.length==0) {
+        document.getElementById("livesearch").innerHTML="";
+        document.getElementById("livesearch").style.border="0px";
+        return;
+    }
+    var xmlhttp=new XMLHttpRequest();
+    xmlhttp.onreadystatechange=function() {
+        if (this.readyState==4 && this.status==200) {
+        document.getElementById("livesearch").innerHTML=this.responseText;
+        document.getElementById("livesearch").style.border="1px solid #A5ACB2";
+        }
+    }
+    xmlhttp.open("GET","livesearch.php?q="+str,true);
+    xmlhttp.send();
+    }
+    </script>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -38,7 +57,8 @@ session_start();
 
     <form class="form-inline my-2 my-lg-0"  action ="http://localhost:4000/search.php">
 
-        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+        <input class="form-control mr-sm-2" type="text" size="30" onkeyup="showResult(this.value)" placeholder="Search" aria-label="Search">
+        <div id="livesearch"></div>
         <button class="btn btn-outline-success" type="submit">Search</button>
 
     </form>
