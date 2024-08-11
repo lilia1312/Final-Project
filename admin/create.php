@@ -12,25 +12,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $title = $_POST['title'];
     $content = $_POST['content'];
-    $image = $_FILES['image'] ['name'];
-    $user_id = $_SESSION ['user_id'];
-
-
-    $dir ='images/' . basename($image);
-
+    
     // Server-side validation
     if (empty(trim($title)) || empty(trim($content))) {
         $error = "Title and Content cannot be empty.";
     } else{
         // Prepare and execute the insert statement
-        $query = "INSERT INTO Posts (title, content, created_at, updated_at, image, user_id) VALUES (:title, :content, NOW(), NOW(), :image, :user_id)";
+        $query = "INSERT INTO Posts (title, content, created_at, updated_at) VALUES (:title, :content, NOW(), NOW())";
         $statement = $db->prepare($query);
         $statement->bindValue(':title', $title);
         $statement->bindValue(':content', $content);
-        $statement->bindValue(':image', $image);
-        $statement->bindValue(':user_id', $user_id);
-
-
 
         // Execute the statement
         if ($statement->execute()) {
@@ -38,10 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $error = "Error: Could not create the page.";
         }
-
-        if(move_uploaded_file($_FILES['image']['tmp_name'], $dir)) {
-            header('location: ../index.php');
-        }   
+  
     }
 }
 
