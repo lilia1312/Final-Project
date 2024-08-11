@@ -67,22 +67,22 @@ $comments = $statement->fetchAll(PDO::FETCH_ASSOC);
             align-items: center;
         }
         .captcha-container img {
-            margin-left: 10px; /* Space between the form field and the CAPTCHA image */
+            margin-left: 10px; 
         }
         .captcha-container input[type="text"] {
-            max-width: 150px; /* Limit the width of the form field */
+            max-width: 150px; 
         }
     </style>
 </head>
-<?php 
-$rand = rand(9999,1000);
-?>
 <body>
     <div class="container mt-5">
         <h1><?php echo $post['title']; ?></h1>
             <p><?php echo $post['content']; ?></p>
             <a href="index.php" class="btn btn-secondary mb-5" >Back to Posts</a>
-
+                <?php 
+                    $statement = 'SELECT * FROM MediaContent WHERE id = :id' ;
+                    $image = $statement->fetch(PDO::FETCH_ASSOC);
+                ?>
             <h4>Comments</h4>
                 <?php foreach ($comments as $comment): ?>
                     <div class="mb-3">

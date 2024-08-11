@@ -6,9 +6,9 @@ $error = '';
 $success = '';
 
 // Save uploaded file
-function file_upload_path($original_filename, $upload_subfolder_name = '../images') {
+function file_upload_path($original_filename, $upload_subfolder_name = 'images') {
     $current_folder = dirname(__FILE__);
-    $path_segments = [$current_folder, $upload_subfolder_name, basename($original_filename)];
+    $path_segments = [$current_folder, '..', $upload_subfolder_name, basename($original_filename)];
     return join(DIRECTORY_SEPARATOR, $path_segments);
 }
 
@@ -33,47 +33,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Server-side validation
     if (empty(trim($title)) || empty(trim($content))) {
         $error = "Title and Content cannot be empty.";
-    } else {
+    } else { 
         // Handling the image upload
         $image_upload_detected = isset($_FILES['image']) && ($_FILES['image']['error'] === 0);
         $image_filename = null;
 
-        // Debugging information
-        if (isset($_FILES['image']) && $_FILES['image']['error'] > 0) {
-            $error = "File Upload Error: " . $_FILES['image']['error'];
-        } elseif ($image_upload_detected) {
-            // Debugging output for file info
-            echo "<p>Client-Side Filename: " . htmlspecialchars($_FILES['image']['name']) . "</p>";
-            echo "<p>Apparent Mime Type: " . htmlspecialchars($_FILES['image']['type']) . "</p>";
-            echo "<p>Size in Bytes: " . htmlspecialchars($_FILES['image']['size']) . "</p>";
-            echo "<p>Temporary Path: " . htmlspecialchars($_FILES['image']['tmp_name']) . "</p>";
-
+        if ($image_upload_detected) {
             $temporary_image_path = $_FILES['image']['tmp_name'];
             $image_filename = basename($_FILES['image']['name']);
             $new_image_path = file_upload_path($image_filename);
 
             if (file_is_an_image($temporary_image_path, $new_image_path)) {
-                move_uploaded_file($temporary_image_path, $new_image_path);
+                if (move_uploaded_file($temporary_image_path, $new_image_path)) {
+                    // Insert the image into the media_content table
+                    $media_query = "INSERT INTO MediaContent (filename) VALUES (:filename)";
+                    $media_statement = $db->prepare($media_query);
+                    $media_statement->bindValue(':filename', $image_filename);
+                    $media_statement->execute();
 
-                $media_query = "INSERT INTO MediaContent (id, filename, uploaded_at) VALUES (:id, :filename, NOW())";
-                $media_statement = $db->prepare($media_query);
-                $media_statement->bindValue(':filename', $image_filename);
-                $media_statement->execute();
-
-                $media_id = $db->lastInsertId(); 
+                    $media_id = $db->lastInsertId(); // Get the inserted media ID
+                } else {
+                    $error = "Failed to move the uploaded file.";
+                }
             } else {
                 $error = "The uploaded file is not a valid image.";
             }
         }
 
-        // Prepare and execute the insert statement for the page
+        // Prepare and execute the insert statement
         $query = "INSERT INTO Posts (title, content, created_at, updated_at, media_id) VALUES (:title, :content, NOW(), NOW(), :media_id)";
         $statement = $db->prepare($query);
         $statement->bindValue(':title', $title);
         $statement->bindValue(':content', $content);
         $statement->bindValue(':media_id', isset($media_id) ? $media_id : null, PDO::PARAM_INT);
 
-        // Execute 
+        // Execute the statement
         if ($statement->execute()) {
             $success = "New post created successfully.";
         } else {
@@ -114,13 +108,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <form method="post" action="create.php" enctype="multipart/form-data">
                 <div class="form-field">
-                    <input type="text" name="title" id="" placeholder="Enter Title:">
+                    <input type="text" name="title" id="title" placeholder="Enter Title:">
                 </div>
                     
                 <div class="mb-3" >
                     <input type="file" class="form-control" id="image" name="image">
                 </div>
-
+                    <br>
                 <div class="form-field">
                     <textarea name="content" id="summernote" cols="30" rows="10" placeholder="Enter Content:"></textarea>
                 </div>
