@@ -2,27 +2,23 @@
 require('connect.php');
 include 'header.php';
 
-$posts =[];
+$posts = [];
 
-if (isset($_GET['search'])){
-
-    if ($_POST['search']){
+if (isset($_POST['search'])) {
+    $search = trim($_POST['search']);
+    if ($search == "") {
         echo "hi";
     } else {
-
-        $search = $_POST['search'];
-        $query = "SELECT * FROM Posts WHERE title LIKE '%$search%' ";
+        $query = "SELECT * FROM Posts WHERE title LIKE :search";
         $statement = $db->prepare($query);
-        $statement->execute();
-        $posts = $statement->fetchAll(PDO::FETCH_ASSOC);
+        $statement->execute(['search' => "%$search%"]);
+        $posts = $statement->fetchAll(PDO::FETCH_OBJ);
 
-        if ($posts->rowCount() == 0) {
-            echo 'hi';
+        if ($statement->rowCount() == 0) {
+            echo 'No results found';
         }
     }
 }
-
-
 ?>
 
 <!DOCTYPE html>
@@ -35,19 +31,19 @@ if (isset($_GET['search'])){
 </head>
 <body>
 <div class="container mt-5">
-        <h1>Search Results</h1>
-        <div class="row">
-            <div class="col-md-8">
-                <div class="list-group">
-                        <?php foreach ($posts as $post): ?>
-                            <a href="view.php?id=<?php echo $post['id']; ?>" class="list-group-item list-group-item-action">
-                                <h5 class="post-title"><?php echo ($post['title']); ?></h5>
-                                <p class="post-content"><?php echo (substr($post['content'], 0, 50)); ?></p>
-                            </a>
-                        <?php endforeach; ?>
-                </div>
+    <h1>Search Results</h1>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="list-group">
+                <?php foreach ($posts as $post): ?>
+                    <a href="view.php?id=<?php echo htmlspecialchars($post->id); ?>" class="list-group-item list-group-item-action">
+                        <h5 class="post-title"><?php echo htmlspecialchars($post->title); ?></h5>
+                        <p class="post-content"><?php echo htmlspecialchars(substr($post->content, 0, 50)); ?></p>
+                    </a>
+                <?php endforeach; ?>
             </div>
         </div>
     </div>
+</div>
 </body>
 </html>

@@ -3,13 +3,13 @@ require('../connect.php');
 include '../header.php';
 
 // Default sort column and direction
-$sort_column = isset($_GET['sort']) ? $_GET['sort'] : 'updated_at';
+$sort_column = isset($_GET['sort']) ? $_GET['sort'] : 'created_at';
 $sort_direction = isset($_GET['direction']) && $_GET['direction'] == 'desc' ? 'desc' : 'asc';
 
 // Validate sort column
 $valid_columns = ['title', 'author', 'created_at','updated_at' ];
 if (!in_array($sort_column, $valid_columns)) {
-    $sort_column = 'updated_at'; // Default to 'created_at' if invalid
+    $sort_column = 'created_at'; // Default to 'created_at' if invalid
 }
 
 $success = "Post deleted successfully";
@@ -80,7 +80,7 @@ $pages = $statement->fetchAll(PDO::FETCH_ASSOC);
                     <a class="nav-link" href="dashboard.php">Dashboard</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="dashboard/add_user.php">Add New Post</a>
+                    <a class="nav-link" href="create.php">Add New Post</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="dashboard/manage_posts.php">Manage Posts</a>

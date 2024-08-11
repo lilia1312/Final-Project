@@ -12,24 +12,7 @@ session_start();
     
     <title></title>
     <html>
-    <script>
-    function showResult(str) {
-    if (str.length==0) {
-        document.getElementById("livesearch").innerHTML="";
-        document.getElementById("livesearch").style.border="0px";
-        return;
-    }
-    var xmlhttp=new XMLHttpRequest();
-    xmlhttp.onreadystatechange=function() {
-        if (this.readyState==4 && this.status==200) {
-        document.getElementById("livesearch").innerHTML=this.responseText;
-        document.getElementById("livesearch").style.border="1px solid #A5ACB2";
-        }
-    }
-    xmlhttp.open("GET","livesearch.php?q="+str,true);
-    xmlhttp.send();
-    }
-    </script>
+    
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -55,10 +38,9 @@ session_start();
             </ul>
         </div>
 
-    <form class="form-inline my-2 my-lg-0"  action ="http://localhost:4000/search.php">
+    <form class="form-inline my-2 my-lg-0" method="POST" action ="search.php">
 
-        <input class="form-control mr-sm-2" type="text" size="30" onkeyup="showResult(this.value)" placeholder="Search" aria-label="Search">
-        <div id="livesearch"></div>
+        <input class="form-control mr-sm-2" type="text" size="30"  placeholder="Search" aria-label="Search">
         <button class="btn btn-outline-success" type="submit">Search</button>
 
     </form>
