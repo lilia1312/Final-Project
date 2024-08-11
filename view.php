@@ -79,10 +79,7 @@ $comments = $statement->fetchAll(PDO::FETCH_ASSOC);
         <h1><?php echo $post['title']; ?></h1>
             <p><?php echo $post['content']; ?></p>
             <a href="index.php" class="btn btn-secondary mb-5" >Back to Posts</a>
-                <?php 
-                    $statement = 'SELECT * FROM MediaContent WHERE id = :id' ;
-                    $image = $statement->fetch(PDO::FETCH_ASSOC);
-                ?>
+  
             <h4>Comments</h4>
                 <?php foreach ($comments as $comment): ?>
                     <div class="mb-3">
