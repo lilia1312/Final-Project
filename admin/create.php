@@ -5,7 +5,7 @@ include '../header.php';
 $error = '';
 $success = '';
 
-//Save uploaded file
+// Save uploaded file
 function file_upload_path($original_filename, $upload_subfolder_name = 'uploads') {
     $current_folder = dirname(__FILE__);
     $path_segments = [$current_folder, $upload_subfolder_name, basename($original_filename)];
@@ -37,6 +37,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty(trim($title)) || empty(trim($content))) {
         $error = "Title and Content cannot be empty.";
     } else{
+        // Handling the image upload
+        $image_upload_detected = isset($_FILES['image']) && ($_FILES['image']['error'] === 0);
+        $image_filename = null;
+
+        if ($image_upload_detected) {
+            $temporary_image_path = $_FILES['image']['tmp_name'];
+            $image_filename = basename($_FILES['image']['name']);
+            $new_image_path = file_upload_path($image_filename);
+
+            if (file_is_an_image($temporary_image_path, $new_image_path)) {
+                move_uploaded_file($temporary_image_path, $new_image_path);
+
+                // Insert the image into the media_content table
+                $media_query = "INSERT INTO MediaContent (filename, uploaded_at) VALUES (:filename, NOW())";
+                $media_statement = $db->prepare($media_query);
+                $media_statement->bindValue(':filename', $image_filename);
+                $media_statement->execute();
+
+                $media_id = $db->lastInsertId(); // Get the inserted media ID
+            } else {
+                $error = "The uploaded file is not a valid image.";
+            }
+        }
         // Prepare and execute the insert statement
         $query = "INSERT INTO Posts (title, content, created_at, updated_at) VALUES (:title, :content, NOW(), NOW())";
         $statement = $db->prepare($query);
