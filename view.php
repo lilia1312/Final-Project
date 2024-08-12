@@ -2,6 +2,8 @@
 require('connect.php');
 include 'header.php';
 
+$admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
+
 if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     $id = $_GET['id'];
 
@@ -42,6 +44,23 @@ if (isset($_POST['submit'])) {
     } else {
         $error = "Comment field cannot be empty.";
     }
+
+    // Handle category assignment
+    if (isset($_POST['assign_category'])) {
+        $category_id = $_POST['category_id'];
+
+        if (is_numeric($category_id)) {
+            $query = "UPDATE Posts SET category_id = :category_id WHERE id = :id";
+            $statement = $db->prepare($query);
+            $statement->bindValue(':category_id', $category_id, PDO::PARAM_INT);
+            $statement->bindValue(':id', $id, PDO::PARAM_INT);
+            $statement->execute();
+
+            $success = "Category assigned successfully.";
+        } else {
+            $error = "Invalid category.";
+        }
+    }
 }
 // Fetch comments for the post
 $query = "SELECT * FROM Comments WHERE post_id = :post_id AND hidden = 0 ORDER BY created_at DESC";
@@ -49,6 +68,11 @@ $statement = $db->prepare($query);
 $statement->bindValue(':post_id', $id, PDO::PARAM_INT);
 $statement->execute();
 $comments = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+$query = "SELECT * FROM Categories ORDER BY name ASC";
+$statement = $db->prepare($query);
+$statement->execute();
+$categories = $statement->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
 
@@ -78,8 +102,31 @@ $comments = $statement->fetchAll(PDO::FETCH_ASSOC);
     <div class="container mt-5">
         <h1><?php echo $post['title']; ?></h1>
             <p><?php echo $post['content']; ?></p>
-            <a href="index.php" class="btn btn-secondary mb-5" >Back to Posts</a>
-  
+
+            <?php if ($admin): ?>
+            <h4>Assign Category</h4>
+            <?php if (!empty($success)): ?>
+                <div class="alert alert-success"><?php echo $success; ?></div>
+            <?php endif; ?>
+            <?php if (!empty($error)): ?>
+                <div class="alert alert-danger"><?php echo $error; ?></div>
+            <?php endif; ?>
+
+            <form method="POST" action="view.php?id=<?php echo $id; ?>">
+                <div class="mb-3">
+                    <select name="category_id" class="form-select" aria-label="Default select example" required>
+                        <option value="" disabled selected>Categories</option>
+                        <?php foreach($categories as $category): ?>
+                            <option value="<?php echo $category['id']; ?>">
+                                <?php echo $category['name']; ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <button type="submit" name="assign_category" class="btn btn-primary btn-sm mb-5">Assign Category</button>
+            </form>
+        <?php endif; ?>
+        
             <h4>Comments</h4>
                 <?php foreach ($comments as $comment): ?>
                     <div class="mb-3">
@@ -88,11 +135,12 @@ $comments = $statement->fetchAll(PDO::FETCH_ASSOC);
                         <small><?php echo ($comment['created_at']); ?></small>
                     </div>
                 <?php endforeach; ?>    
-
+        <div>
             <h4>Leave a Comment</h4>
                 <?php if (!empty($error)): ?>
                     <div class="alert alert-danger"><?php echo ($error); ?></div>
                 <?php endif; ?>    
+        </div>
 
             <form method="POST" action="view.php?id=<?php echo $id; ?>">
                 <div class="mb-3">
@@ -107,8 +155,10 @@ $comments = $statement->fetchAll(PDO::FETCH_ASSOC);
                 <input type="text" class="form-control" placeholder="Enter Captcha" name="captcha" required>
                 <img src="captcha.php" alt="CAPTCHA">
             </div>
-                <button type="submit" class="btn btn-primary" name="submit">Post Comment</button>
+                <button type="submit" class="btn btn-primary btn-sm mb-5" name="submit">Post Comment</button>
             </form>
+
+        <a href="index.php" class="btn btn-secondary mb-5" >Back to Posts</a>
     </div>
 </body>
 </html>
