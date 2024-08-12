@@ -8,8 +8,24 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     die("Access denied.");
 }
 
+// Default sort column and direction
+$sort_column = isset($_GET['sort']) ? $_GET['sort'] : 'created_at';
+$sort_direction = isset($_GET['direction']) && $_GET['direction'] == 'desc' ? 'desc' : 'asc';
+
+// Validate sort column
+$valid_columns = ['title', 'author', 'created_at','updated_at' ];
+if (!in_array($sort_column, $valid_columns)) {
+    $sort_column = 'created_at'; // Default to 'created_at' if invalid
+}
+
+$success = "Post deleted successfully";
+
+
+// Validate sort direction
+$sort_direction = ($sort_direction === 'desc') ? 'desc' : 'asc';
+
 // Prepare SQL query with dynamic sorting
-$query = "SELECT * FROM Posts ";
+$query = "SELECT * FROM Posts ORDER BY $sort_column $sort_direction";
 $statement = $db->prepare($query);
 $statement->execute();
 $pages = $statement->fetchAll(PDO::FETCH_ASSOC);

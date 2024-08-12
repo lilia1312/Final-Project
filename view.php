@@ -2,9 +2,6 @@
 require('connect.php');
 include 'header.php';
 
-
-
-
 // Check if the user is an admin
 $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
 
