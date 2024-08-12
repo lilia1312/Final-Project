@@ -4,6 +4,11 @@ include 'header.php';
 
 $admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
 
+if (!isset($_SESSION['user_id'])) {
+    die('User is not logged in.');
+}
+
+
 if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     $id = $_GET['id'];
 
@@ -39,8 +44,8 @@ if (isset($_POST['submit'])) {
         $statement->execute();
         
         // Redirect to avoid re-submission on refresh
-        //header('Location: view.php?id=' . $id);
-        //exit;
+        header('Location: view.php?id=' . $id);
+        exit;
     } else {
         $error = "Comment field cannot be empty.";
     }
