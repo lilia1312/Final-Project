@@ -12,11 +12,7 @@ $statement = $db->prepare($query);
 $statement->execute(); 
 $category = $statement->fetchAll(PDO::FETCH_ASSOC);
 
-/*<?php foreach ($category as $categories): ?>
-    <div>
-    <?php echo ($categories['name']);  ?>
-    </div>
-<?php endforeach; ?>*/
+
 ?>
 
 <!DOCTYPE html>
@@ -52,12 +48,22 @@ $category = $statement->fetchAll(PDO::FETCH_ASSOC);
         <div class="row">
             <div class="col-md-8">
                 <h1 class="mb-3">Posts</h1>
+
                 <div class="list-group">
                     <?php foreach ($posts as $post): ?>
                         <a href="view.php?id=<?php echo $post['id']; ?>" class="list-group-item list-group-item-action">
                             <h5 class="post-title"><?php echo ($post['title']); ?></h5>
                             <p class="post-content"><?php echo (substr($post['content'], 0, 50)); ?></p>
                         </a>
+                    <?php endforeach; ?>
+                </div>
+
+                <div class="category-list mt-4">
+                    <h3>Categories</h3>
+                    <?php foreach ($category as $categories): ?>
+                        <div class="category-item">
+                            <?php echo $categories['name']; ?>
+                        </div>
                     <?php endforeach; ?>
                 </div>
             </div>
