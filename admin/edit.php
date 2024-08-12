@@ -6,7 +6,7 @@ include '../header.php';
 $post = null;
 
 if (isset($_GET['id'])) {
-    $id = $_GET['id'];
+    $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 
     $query = "SELECT * FROM Posts WHERE id = :id";
     $statement = $db->prepare($query);

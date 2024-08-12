@@ -11,8 +11,6 @@ $query = "SELECT * FROM Categories ORDER BY created_at DESC";
 $statement = $db->prepare($query); 
 $statement->execute(); 
 $category = $statement->fetchAll(PDO::FETCH_ASSOC);
-
-
 ?>
 
 <!DOCTYPE html>

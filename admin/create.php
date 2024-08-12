@@ -20,8 +20,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $title = $_POST['title'];
     $content = $_POST['content'];
-    $user_id = $_SESSION['user_id'];
-    $category_id = $_POST['category_id'];
+    $user_id = filter_var($_SESSION['user_id'], FILTER_VALIDATE_INT);
+    $category_id = filter_input(INPUT_POST, 'category_id', FILTER_VALIDATE_INT);
 
     // Server-side validation
     if (empty(trim($title)) || empty(trim($content))) {
