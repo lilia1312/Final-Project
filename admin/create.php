@@ -5,6 +5,14 @@ include '../header.php';
 $error = '';
 $success = '';
 
+if (!isset($_SESSION['user_id'])) {
+    die('User is not logged in.');
+}
+
+$query = "SELECT * FROM Categories ORDER BY created_at DESC";
+$statement = $db->prepare($query); 
+$statement->execute(); 
+$category = $statement->fetchAll(PDO::FETCH_ASSOC);
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') { 
@@ -12,16 +20,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $title = $_POST['title'];
     $content = $_POST['content'];
-    
+    $user_id = $_SESSION['user_id'];
+    $category_id = $_POST['category_id'];
+
     // Server-side validation
     if (empty(trim($title)) || empty(trim($content))) {
         $error = "Title and Content cannot be empty.";
     } else{
         // Prepare and execute the insert statement
-        $query = "INSERT INTO Posts (title, content, created_at, updated_at) VALUES (:title, :content, NOW(), NOW())";
+        $query = "INSERT INTO Posts ( user_id, category_id, title, content, created_at, updated_at) VALUES (:user_id, :category_id, :title, :content,  NOW(), NOW())";
         $statement = $db->prepare($query);
         $statement->bindValue(':title', $title);
         $statement->bindValue(':content', $content);
+        $statement->bindValue(':user_id', $user_id);
+        $statement->bindValue(':category_id', $category_id);
+
 
         // Execute the statement
         if ($statement->execute()) {
@@ -68,23 +81,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <input type="text" name="title" id="title" placeholder="Enter Title:">
                 </div>
                     
-                <div class="mb-3" >
-                    <input type="file" class="form-control" id="image" name="image">
-                </div>
+                
                     <br>
-                <div class="form-field">
+                <div class="form-field mb-3">
                     <textarea name="content" id="summernote" cols="30" rows="10" placeholder="Enter Content:"></textarea>
                 </div>
-                
-                <div class="form-outline mb-4">
 
-                <select name="category_id" class="form-select" aria-label="Default select example">
-                    <option selected>Categories</option>
-                    <?php foreach($category as $categories) : ?>
-                    <option value="<?php echo $categories['id']; ?>">"><?php echo $categories['name']; ?></option>
-                    <?php endforeach; ?>
-                </select>
+                <div class="form-outline mb-3">
+                    <select name="category_id" class="form-select" aria-label="Default select example">
+                        <option value="" disabled selected>Categories</option>
+                        <?php foreach($category as $categories) : ?>
+                        <option value="<?php echo $categories['id']; ?>"><?php echo $categories['name']; ?></option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
+
+                <div class="form-field mb-3" >
+                    <input type="file" class="form-control" id="image" name="image">
+                </div>
+                
+               
                 
                 <!---Submit button--->
                 <button type="submit" value="Add Post" name="create">Create Post</button>
