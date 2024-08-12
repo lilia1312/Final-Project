@@ -35,19 +35,22 @@ $posts = $statement->fetchAll(PDO::FETCH_ASSOC);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Posts in <?php echo $category['name']; ?></title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
+  
 </head>
 <body>
-    <div class="container">
-        <h1>Posts in <?php echo $category['name']; ?></h1>
-        <ul class="list-group">
-            <?php foreach ($posts as $post): ?>
-                <li class="list-group-item">
-                    <a href="view.php?id=<?php echo $post['id']; ?>">
-                        <?php echo $post['title']; ?>
-                    </a>
-                </li>
-            <?php endforeach; ?>
-        </ul>
+    <div class="container mt-4">
+        <div class="list-group">
+            <h1>Posts in <?php echo $category['name']; ?></h1>
+            <ul class="list-group">
+                <?php foreach ($posts as $post): ?>
+                    <li class="list-group-item" >
+                        <a href="view.php?id=<?php echo $post['id']; ?>" style="color:#000;  text-decoration: none">
+                            <?php echo $post['title']; ?>
+                        </a>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
     </div>
 </body>
 </html>

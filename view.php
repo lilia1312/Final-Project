@@ -4,10 +4,6 @@ include 'header.php';
 
 
 
-// Check if user is logged in
-if (!isset($_SESSION['user_id'])) {
-    die('User is not logged in.');
-}
 
 // Check if the user is an admin
 $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
@@ -43,8 +39,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $statement->execute();
             
             // Redirect 
-            header('Location: view.php?id=' . $id);
-            exit;
+            //header('Location: view.php?id=' . $id);
+            //exit;
         } else {
             $error = "Comment field cannot be empty.";
         }
@@ -141,7 +137,6 @@ $categories = $statement->fetchAll(PDO::FETCH_ASSOC);
         <?php endforeach; ?>    
 
         <div>
-            <h4>Leave a Comment</h4>
             <?php if (!empty($error)): ?>
                 <div class="alert alert-danger"><?php echo $error; ?></div>
             <?php endif; ?>    
