@@ -100,32 +100,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <input type="file" class="form-control" id="image" name="image">
                 </div>
                 
-               
-                
                 <!---Submit button--->
                 <button type="submit" value="Add Post" name="create">Create Post</button>
 
             </form>
         </div>
-        <script>
-      $('#summernote').summernote({
-        tabsize: 2,
-        height: 120,
-        toolbar: [
-          ['style', ['style']],
-          ['font', ['bold', 'underline', 'clear']],
-          ['color', ['color']],
-          ['para', ['ul', 'ol', 'paragraph']],
-          ['table', ['table']],
-          ['insert', ['link', 'picture', 'video']],
-          ['view', ['fullscreen', 'codeview', 'help']]
-        ]
-      });
+    <script>
+        $('#summernote').summernote({
+            tabsize: 2,
+            height: 120,
+            toolbar: [
+            ['style', ['style']],
+            ['font', ['bold', 'underline', 'clear']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['table', ['table']],
+            ['insert', ['link', 'picture', 'video']],
+            ['view', ['fullscreen', 'codeview', 'help']]
+            ]
+        });
     </script>
 
     </body>
-<?php 
-//include("admin/footer.php");
-?>
+</html>
 
 
