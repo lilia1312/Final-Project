@@ -76,6 +76,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <textarea name="content" id="summernote" cols="30" rows="10" placeholder="Enter Content:"></textarea>
                 </div>
                 
+                <div class="form-outline mb-4">
+
+                <select name="category_id" class="form-select" aria-label="Default select example">
+                    <option selected>Categories</option>
+                    <?php foreach($category as $categories) : ?>
+                    <option value="<?php echo $categories['id']; ?>">"><?php echo $categories['name']; ?></option>
+                    <?php endforeach; ?>
+                </select>
+                </div>
                 
                 <!---Submit button--->
                 <button type="submit" value="Add Post" name="create">Create Post</button>

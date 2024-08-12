@@ -34,6 +34,19 @@ $category = $statement->fetchAll(PDO::FETCH_ASSOC);
         .container {
             padding-top: 20px;
         }
+        .category-list {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+        }
+        .category-item {
+            padding: 10px 0;
+        }
+        .category-item a {
+            text-decoration: none;
+            color: #000000;
+        }
+    
         .footer {
             padding: 20px;
             background-color: #343a40;
@@ -62,7 +75,9 @@ $category = $statement->fetchAll(PDO::FETCH_ASSOC);
                     <h3>Categories</h3>
                     <?php foreach ($category as $categories): ?>
                         <div class="category-item">
-                            <?php echo $categories['name']; ?>
+                            <a href="http://localhost:4000/category.php?id=<?php echo $categories['id']; ?>">
+                                <?php echo $categories['name']; ?>
+                            </a>
                         </div>
                     <?php endforeach; ?>
                 </div>
